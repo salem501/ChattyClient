@@ -9,7 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Server implements ConnectionProcessor {
+public class Server {
     private final Selector selector;
 
     private final SocketChannel socketChannel;
