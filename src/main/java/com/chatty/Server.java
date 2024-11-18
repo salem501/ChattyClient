@@ -1,5 +1,7 @@
 package com.chatty;
 
+import javafx.application.Platform;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -14,8 +16,11 @@ public class Server {
 
     private final SocketChannel socketChannel;
 
-    public Server() {
+    private final UserInterfaceService userInterfaceService;
+
+    public Server(UserInterfaceService userInterfaceService) {
         try {
+            this.userInterfaceService = userInterfaceService;
             this.selector = Selector.open();
             this.socketChannel = SocketChannel.open();
             this.socketChannel.connect(new InetSocketAddress("localhost", 1234));
@@ -48,8 +53,11 @@ public class Server {
                             buffer.flip();
                             byte[] data = new byte[buffer.remaining()];
                             buffer.get(data);
-
+                            Platform.runLater(() -> {
+                                userInterfaceService.addMessageInMessageContainer(new String(data).trim(), true);
+                            });
                             System.out.println("Received: " + new String(data).trim());
+
                             buffer.clear();
                         }
                     }
